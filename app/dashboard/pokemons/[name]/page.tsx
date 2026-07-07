@@ -1,60 +1,54 @@
-import { Pokemon } from "@/app/pokemons";
+import { Pokemon, PokemonResponse } from "@/app/pokemons";
 import { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 
 interface Props {
-    params: { id: string };
+    params: { name: string };
 };
 
 //! En build time
 export async function generateStaticParams() {
-    const static151Pokemons = Array.from({length: 151}).map( (v, i) => `${i + 1}` )
-    
-    return static151Pokemons.map( id => ({
-        id: id,
+
+    const data: PokemonResponse = await fetch(`https://pokeapi.co/api/v2/pokemon?limit=151`)
+        .then(res => res.json());
+    const static151Pokemons = data.results.map(pokemon => ({
+        name: pokemon.name,
     }));
-    
-    // return [
-    //     { id: '1' },
-    //     { id: '2' },
-    //     { id: '3' },
-    //     { id: '4' },
-    //     { id: '5' },
-    //     { id: '6' },
-    // ];
+
+    return static151Pokemons.map( ({name}) => ({
+        name: name,
+    }));
 };
-
-
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
     try {
-        const { id: pokemonId } = await params;
-        const { id, name } = await getPokemon(pokemonId);
+        const { name: pokemonName } = await params;
+        const { id, name } = await getPokemon(pokemonName);
         return {
             title: `#${id} - ${name}`,
-            description: `${id} pokemon page`
+            description: `${name} pokemon page`
         }
     } catch (error) {
         return {
             title: 'Pokemon Page',
             description: 'Esto es una página de pokemon'
-        }   
+        }
     }
-    
+
 }
 
-const getPokemon = async (id: string): Promise<Pokemon> => {
+const getPokemon = async (name: string): Promise<Pokemon> => {
     try {
-        const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`, {
-            cache: 'force-cache', // TODO: Cambiar en el futuro
+        const pokemon = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`, {
+            // cache: 'force-cache', // TODO: Cambiar en el futuro
             next: {
                 revalidate: 60 * 60 * 30 * 6
             }
         }).then(resp => resp.json());
-    
+
         console.log('Se cargó', pokemon.name)
-    
+
         return pokemon;
     } catch (error) {
         notFound();
@@ -62,8 +56,8 @@ const getPokemon = async (id: string): Promise<Pokemon> => {
 };
 
 export default async function PokemonPage({ params }: Props) {
-    const { id } = await params;
-    const pokemon = await getPokemon(id);
+    const { name } = await params;
+    const pokemon = await getPokemon(name);
 
     return (
         <div className="flex mt-5 flex-col items-center text-slate-800">
@@ -154,9 +148,6 @@ export default async function PokemonPage({ params }: Props) {
 
                         </div>
                     </div>
-
-
-
                 </div>
             </div>
         </div>
