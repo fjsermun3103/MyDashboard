@@ -1,4 +1,6 @@
-import { PokemonGrid, PokemonResponse, SimplePokemon } from "@/app/pokemons";
+import { FavoritePokemons, PokemonGrid, PokemonResponse, SimplePokemon } from "@/app/pokemons";
+import { NoFavorites } from "@/app/pokemons/components/FavoritePokemons";
+import { IoHeartOutline } from "react-icons/io5";
 // import { cacheTag, revalidateTag } from "next/cache";
 
 
@@ -7,20 +9,13 @@ export const metadata = {
     description: 'This is the page to show your favorite pokemons',
 };
 
-export default async function PokemonsPage() {
-    // 'use cache';
-
-    // cacheTag('pokemons');
-    // cacheLife({
-    //     stale: 10,
-    //     revalidate: 60,
-    // });
-    // revalidateTag('pokemons', 'max');
+export default async function FavoritesPage() {
 
     return (
         <div className="flex flex-col">
-            <span className="text-5xl my-2">Favorite Pokemon <small className="text-blue-500">Global State</small></span>
-            <PokemonGrid pokemons={[]} />
+            <span className="text-5xl my-2">Pokemon list <small className="text-blue-500">static</small></span>
+            <FavoritePokemons/>
         </div>
     );
 }
+
