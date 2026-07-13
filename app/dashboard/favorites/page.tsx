@@ -1,6 +1,4 @@
 import { FavoritePokemons, PokemonGrid, PokemonResponse, SimplePokemon } from "@/app/pokemons";
-import { NoFavorites } from "@/app/pokemons/components/FavoritePokemons";
-import { IoHeartOutline } from "react-icons/io5";
 // import { cacheTag, revalidateTag } from "next/cache";
 
 
